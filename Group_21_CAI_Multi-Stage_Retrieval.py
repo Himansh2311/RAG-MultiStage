@@ -23,28 +23,19 @@ Clean and structure data for retrieval.
 import pandas as pd
 import streamlit as st
 
-uploaded_files = st.file_uploader("Upload files", accept_multiple_files=True)
+st.title("Financial Data Processing")
 
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        st.write(f"Processing file: {uploaded_file.name}")
-        df = pd.read_csv(uploaded_file)  # Read CSV
-        st.write("Columns in the file:", df.columns.tolist())
-else:
-    st.warning("Please upload at least one file.")
+# Upload file
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-import os
-
-file_path = "/content/Financial Statements.csv"
-if os.path.exists(file_path):
-    df = pd.read_csv(file_path)
-else:
-    st.error(f"File not found: {file_path}. Please upload a file.")
-
-if uploaded_files:
-    uploaded_file = uploaded_files[0]  # Process only the first file for now
+if uploaded_file is not None:
+    # Read CSV directly without saving
     df = pd.read_csv(uploaded_file)
 
+    # Display column names
+    st.write("Columns in the file:", df.columns.tolist())
+
+    # Select relevant columns if they exist
     selected_columns = ["Year", "Company", "Revenue", "Net Income", "Earning Per Share", "EBITDA"]
     existing_columns = [col for col in selected_columns if col in df.columns]
 
@@ -52,13 +43,19 @@ if uploaded_files:
         st.error("⚠️ None of the selected columns are found in the dataset. Check column names.")
     else:
         df = df[existing_columns].dropna()
+
+        # Convert structured data into text chunks
         documents = [
             f"In {row.get('Year', 'N/A')}, {row.get('Company', 'N/A')} had revenue of {row.get('Revenue', 'N/A')} USD, "
             f"net income of {row.get('Net Income', 'N/A')} USD, earning per share of {row.get('Earning Per Share', 'N/A')}, "
             f"and EBITDA of {row.get('EBITDA', 'N/A')} USD."
             for _, row in df.iterrows()
         ]
+
         st.success(f"✅ Data Preprocessed and Structured for Retrieval. Processed {len(documents)} financial records.")
+        st.write(df)  # Show the processed DataFrame
+else:
+    st.warning("Please upload a CSV file.")
 
 """## 2. Basic RAG Implementation
 Convert financial data into text chunks.
