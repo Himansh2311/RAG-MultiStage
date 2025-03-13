@@ -21,11 +21,8 @@ Clean and structure data for retrieval.
 """
 
 import pandas as pd
-from google.colab import files
-
-# Upload file
-uploaded = files.upload()
-
+import streamlit as st
+uploaded_file = st.file_uploader("Upload a file")
 # Get the filename
 filename = list(uploaded.keys())[0]
 
