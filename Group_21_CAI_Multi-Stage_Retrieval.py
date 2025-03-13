@@ -22,19 +22,20 @@ Clean and structure data for retrieval.
 
 import pandas as pd
 import streamlit as st
+
 uploaded = st.file_uploader("Upload files", accept_multiple_files=True)
 
 if uploaded:
-    filename = list(uploaded.keys())[0]  # If `uploaded` is a dict, ensure it contains files before accessing keys
-    st.write(f"Processing file: {filename}")
+    filename = uploaded[0]  # Get the first file object
+    st.write(f"Processing file: {filename.name}")
+
+    # Read the file into a Pandas DataFrame
+    df = pd.read_csv(filename)
+
+    # Print column names
+    st.write("Columns in the file:", df.columns.tolist())
 else:
     st.warning("Please upload at least one file.")
-
-# Read the file into a Pandas DataFrame
-df = pd.read_csv(filename)
-
-# Print column names
-print(df.columns)
 
 import pandas as pd
 
