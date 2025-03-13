@@ -73,7 +73,7 @@ Embed using a pre-trained model.
 Store & retrieve using a vector database.
 """
 
-!pip install sentence-transformers faiss-cpu
+##!pip install sentence-transformers faiss-cpu
 
 import faiss
 import numpy as np
@@ -100,7 +100,7 @@ Experiment with different chunk sizes & retrieval methods.
 Implement re-ranking.
 """
 
-!pip install rank_bm25
+##!pip install rank_bm25
 
 from rank_bm25 import BM25Okapi
 
@@ -134,7 +134,7 @@ Display answer & confidence score.
 Ensure responsive formatting.
 """
 
-!pip install streamlit
+##!pip install streamlit
 
 import streamlit as st
 
