@@ -35,8 +35,6 @@ df = pd.read_csv(filename)
 # Print column names
 print(df.columns)
 
-!ls
-
 import pandas as pd
 
 # Load financial dataset
