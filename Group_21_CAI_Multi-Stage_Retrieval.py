@@ -23,51 +23,42 @@ Clean and structure data for retrieval.
 import pandas as pd
 import streamlit as st
 
-uploaded = st.file_uploader("Upload files", accept_multiple_files=True)
+uploaded_files = st.file_uploader("Upload files", accept_multiple_files=True)
 
-if uploaded:
-    filename = uploaded[0]  # Get the first file object
-    st.write(f"Processing file: {filename.name}")
-
-    # Read the file into a Pandas DataFrame
-    df = pd.read_csv(filename)
-
-    # Print column names
-    st.write("Columns in the file:", df.columns.tolist())
+if uploaded_files:
+    for uploaded_file in uploaded_files:
+        st.write(f"Processing file: {uploaded_file.name}")
+        df = pd.read_csv(uploaded_file)  # Read CSV
+        st.write("Columns in the file:", df.columns.tolist())
 else:
     st.warning("Please upload at least one file.")
 
-import pandas as pd
+import os
 
-# Load financial dataset
-file_path = "/content/Financial Statements.csv"  # Ensure correct path
-df = pd.read_csv(file_path)
+file_path = "/content/Financial Statements.csv"
+if os.path.exists(file_path):
+    df = pd.read_csv(file_path)
+else:
+    st.error(f"File not found: {file_path}. Please upload a file.")
 
-# Display available columns for debugging
-print("Available Columns:", df.columns.tolist())
+if uploaded_files:
+    uploaded_file = uploaded_files[0]  # Process only the first file for now
+    df = pd.read_csv(uploaded_file)
 
-# Standardize column names (strip spaces, lowercase for consistency)
-df.columns = df.columns.str.strip()
+    selected_columns = ["Year", "Company", "Revenue", "Net Income", "Earning Per Share", "EBITDA"]
+    existing_columns = [col for col in selected_columns if col in df.columns]
 
-# Select only existing columns (to prevent KeyErrors)
-selected_columns = ["Year", "Company", "Revenue", "Net Income", "Earning Per Share", "EBITDA"]
-existing_columns = [col for col in selected_columns if col in df.columns]
-
-if not existing_columns:
-    raise ValueError("⚠️ None of the selected columns are found in the dataset. Check column names.")
-
-# Filter dataset with only existing columns
-df = df[existing_columns].dropna()
-
-# Convert structured data into text chunks
-documents = [
-    f"In {row.get('Year', 'N/A')}, {row.get('Company', 'N/A')} had revenue of {row.get('Revenue', 'N/A')} USD, "
-    f"net income of {row.get('Net Income', 'N/A')} USD, earning per share of {row.get('Earning Per Share', 'N/A')}, "
-    f"and EBITDA of {row.get('EBITDA', 'N/A')} USD."
-    for _, row in df.iterrows()
-]
-
-print(f"✅ Data Preprocessed and Structured for Retrieval. Processed {len(documents)} financial records.")
+    if not existing_columns:
+        st.error("⚠️ None of the selected columns are found in the dataset. Check column names.")
+    else:
+        df = df[existing_columns].dropna()
+        documents = [
+            f"In {row.get('Year', 'N/A')}, {row.get('Company', 'N/A')} had revenue of {row.get('Revenue', 'N/A')} USD, "
+            f"net income of {row.get('Net Income', 'N/A')} USD, earning per share of {row.get('Earning Per Share', 'N/A')}, "
+            f"and EBITDA of {row.get('EBITDA', 'N/A')} USD."
+            for _, row in df.iterrows()
+        ]
+        st.success(f"✅ Data Preprocessed and Structured for Retrieval. Processed {len(documents)} financial records.")
 
 """## 2. Basic RAG Implementation
 Convert financial data into text chunks.
