@@ -63,26 +63,6 @@ Embed using a pre-trained model.
 Store & retrieve using a vector database.
 """
 
-import subprocess
-import sys
-
-# Function to install packages if missing
-def install_package(package):
-    try:
-        __import__(package)
-    except ImportError:
-        print(f"Installing {package}...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Install FAISS and dependencies
-install_package("faiss-cpu")  # Change to 'faiss-gpu' if using CUDA
-install_package("rank_bm25")
-install_package("streamlit")
-install_package("faiss-gpu")  # Change to 'faiss-gpu' if using CUDA
-install_package("sentence-transformers")
-install_package("numpy")
-install_package("scikit-learn")
-
 ##!pip install sentence-transformers faiss-cpu
 
 import faiss
